@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Filters.Abstract
 {
-    public abstract class FilterBase<TItem>
+    public abstract class FilterBase<TItem, TResult>
     {
         protected NameValueCollection KeyValue;
 
@@ -12,6 +12,6 @@ namespace Filters.Abstract
         {
             KeyValue = keyValue;
         }
-        public abstract Expression<Func<TItem, TResult>> GetConditional<TResult>();
+        public abstract Expression<Func<TItem, TResult>> GetConditional();
     }
 }
