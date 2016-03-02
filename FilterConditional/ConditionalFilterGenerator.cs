@@ -5,18 +5,19 @@ using System.Linq.Expressions;
 using FilterConditional.Builder.Interfaces;
 using FilterConditional.Container;
 using FilterConditional.TypeExpression;
-using Filters.Abstract;
+
 
 
 namespace FilterConditional
 {
-    public class ConditionalFilterGenerator<TItem> : FilterBase<TItem, bool>
+    public class ConditionalFilterGenerator<TItem>
     {
+        protected NameValueCollection KeyValue;
         private readonly Lazy<List<ContainerExpression>> _expressions;
-        private readonly IExpressionBuilder<ContainerExpression, bool> _builder; 
-        public ConditionalFilterGenerator(NameValueCollection dic,IExpressionBuilder<ContainerExpression, bool> builder)
-            :base(dic)
+        private readonly IExpressionBuilder<ContainerExpression, bool> _builder;
+        public ConditionalFilterGenerator(NameValueCollection dic, IExpressionBuilder<ContainerExpression, bool> builder)
         {
+            KeyValue = dic;
             _builder = builder;
             _expressions = new Lazy<List<ContainerExpression>>(() => new List<ContainerExpression>());
         }
@@ -72,16 +73,16 @@ namespace FilterConditional
         public ConditionalFilterGenerator<TItem> Or<TConst, TConst1>(Expression<Func<TItem, TConst, TConst1, bool>> expr,
             params string[] key)
         {
-            AddExpression(expr, expr.Parameters, true, key,BinaryExpressionType.Or);
+            AddExpression(expr, expr.Parameters, true, key, BinaryExpressionType.Or);
             return this;
         }
-        private void AddExpression(Expression expr,IEnumerable<ParameterExpression> param, bool require, string[] key,
+        private void AddExpression(Expression expr, IEnumerable<ParameterExpression> param, bool require, string[] key,
             BinaryExpressionType type)
         {
-            _expressions.Value.Add(new ContainerExpression(expr, param, key,type,require));
+            _expressions.Value.Add(new ContainerExpression(expr, param, key, type, require));
         }
         #endregion
-        public override Expression<Func<TItem, bool>> GetConditional()
+        public Expression<Func<TItem, bool>> GetConditional()
         {
             try
             {
@@ -92,8 +93,8 @@ namespace FilterConditional
                 return t => false;
             }
         }
-        
-        
+
+
 
     }
 }
